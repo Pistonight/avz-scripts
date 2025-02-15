@@ -1,0 +1,33 @@
+version: '3'
+
+vars:
+  COMMON_SOURCES: >
+    src/common.cpp
+
+tasks:
+  inject:
+    cmds:
+      - ./AsmVsZombies/bin/injector.exe
+
+  test:
+    cmds:
+      - task: compile
+        vars:
+          SOURCES: >
+            src/test.cpp
+            {{.COMMON_SOURCES}}
+      - task: inject
+
+  compile:
+    vars:
+      DIR: 
+        sh: pwd
+    cmds:
+      - > 
+        ./AsmVsZombies/MinGW/bin/g++
+        -m32 -static -std=c++2b -fexperimental-library
+        -Werror=return-type -g -Wall
+        -isystem "{{.DIR}}/AsmVsZombies/inc"
+        -lavz -lgdi32 -ldbghelp -L "{{.DIR}}/AsmVsZombies/bin" -shared
+        -o bin/libavz.dll
+        {{.SOURCES}}

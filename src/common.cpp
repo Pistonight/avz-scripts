@@ -22,7 +22,7 @@ void CommonKeys() {
 
 void AutoRemovePumpkin() {
     // when to remove the pumpkin
-    constexpr uint16_t HAMMER_THRES = 260;
+    constexpr uint16_t HAMMER_THRES = 255;
     static std::unordered_map<uint16_t, uint16_t> raise_hammer_time;
 
     std::vector<APlant*> pumpkins;
@@ -59,13 +59,14 @@ void AutoRemovePumpkin() {
             
             if (raise_hammer_time[idx] > HAMMER_THRES) {
                 // check if it will hit any pumpkins
-                float ax = zombie.Abscissa() - zombie.AttackAbscissa() - 181;
+                float ax = zombie.Abscissa() - zombie.AttackAbscissa() - 183;
                 int row = zombie.Row();
                 for (auto&& pumpkin: pumpkins) {
                     if (pumpkin->Row() != row) {
                         continue;
                     }
-                    if (pumpkin->Col() * 80 > ax) {
+                    int px = pumpkin->Col() * 80;
+                    if (px > ax && px < ax + 40) {
                         endangered_pumpkins[row][pumpkin->Col()] = true;
                     }
                 }
